@@ -92,21 +92,27 @@ const App = () => {
     return (
         <div className="App">
             {showConfetti && <Confetti />}
-            <h1>Piechartle</h1>
-            <div className="instructions">
-                <p>
-                    Welcome to Piechartle! Your goal is to guess the percentage of the cyan
-                    area in the pie chart. You have 5 guesses to get it right. Enter a number
-                    between 0 and 100 and submit your guess. Good luck!
-                </p>
-            </div>
+            <header>
+                <h1 id="game-title" role="heading" aria-level="1">Piechartle</h1>
+                <div className="instructions">
+                    <h2>How to Play</h2>
+                    <p>
+                        Welcome to Piechartle! Your goal is to guess the percentage of the cyan area in the pie chart.
+                        You have 5 guesses to get it right. Enter a number between 0 and 100 and submit your guess.
+                        Good luck!
+                    </p>
+                </div>
+            </header>
+
             <PieChart percentage={correctPercentage} />
             <div className="game-area">
                 <p>Guesses Remaining: {remainingGuesses}</p>
                 <GuessInput onGuess={handleGuess} disabled={remainingGuesses === 0} />
-                {feedback && <Feedback message={feedback} />}
+                <div role="alert" aria-live="assertive">
+                    {feedback && <Feedback message={feedback} />}
+                </div>
             </div>
-            <div className="guess-history">
+            <section className="guess-history">
                 <h2>Previous Guesses</h2>
                 <ul>
                     {guesses.map((g, index) => (
@@ -115,7 +121,7 @@ const App = () => {
                         </li>
                     ))}
                 </ul>
-            </div>
+            </section>
         </div>
     );
 };
