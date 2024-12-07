@@ -89,11 +89,17 @@ const App = () => {
         }
     };
 
-
     return (
         <div className="App">
             {showConfetti && <Confetti />}
-            <h1>Pietle</h1>
+            <h1>Piechartle</h1>
+            <div className="instructions">
+                <p>
+                    Welcome to Piechartle! Your goal is to guess the percentage of the cyan
+                    area in the pie chart. You have 5 guesses to get it right. Enter a number
+                    between 0 and 100 and submit your guess. Good luck!
+                </p>
+            </div>
             <PieChart percentage={correctPercentage} />
             <div className="game-area">
                 <p>Guesses Remaining: {remainingGuesses}</p>
