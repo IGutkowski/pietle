@@ -12,6 +12,7 @@ const GuessInput = ({ onGuess, disabled }) => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <label htmlFor="guess-input" className="sr-only">Enter your guess</label>
             <input
                 id="guess-input"
                 type="number"
@@ -24,6 +25,7 @@ const GuessInput = ({ onGuess, disabled }) => {
             <button type="submit" disabled={disabled} aria-label="Submit guess">
                 Guess
             </button>
+            <span id="guess-help" className="sr-only">Enter a number between 0 and 100 to guess the percentage of the cyan area.</span>
         </form>
     );
 };
