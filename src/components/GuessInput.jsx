@@ -13,17 +13,20 @@ const GuessInput = ({ onGuess, disabled }) => {
     return (
         <form onSubmit={handleSubmit}>
             <input
+                id="guess-input"
                 type="number"
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
                 placeholder="Enter your guess"
                 disabled={disabled}
+                aria-describedby="guess-help"
             />
-            <button type="submit" disabled={disabled}>
+            <button type="submit" disabled={disabled} aria-label="Submit guess">
                 Guess
             </button>
         </form>
     );
 };
+
 
 export default GuessInput;
