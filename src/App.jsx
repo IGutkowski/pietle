@@ -3,20 +3,21 @@ import PieChart from "./components/PieChart";
 import GuessInput from "./components/GuessInput";
 import Feedback from "./components/Feedback";
 import Confetti from "react-confetti";
+import { Helmet } from "react-helmet";
 import "./App.css";
 
 const getDailyPercentage = () => {
     const today = new Date().toISOString().slice(0, 10);
     const seed = parseInt(today.replace(/-/g, ""), 10);
     const rng = Math.sin(seed) * 10000;
-    return Math.abs(rng % 100).toFixed(0); // Percentage of cyan slice
+    return Math.abs(rng % 100).toFixed(0);
 };
 
 const App = () => {
     const [correctPercentage, setCorrectPercentage] = useState(getDailyPercentage);
     const [guesses, setGuesses] = useState([]);
     const [feedback, setFeedback] = useState("");
-    const [remainingGuesses, setRemainingGuesses] = useState(null); // Start as null
+    const [remainingGuesses, setRemainingGuesses] = useState(null);
     const [showConfetti, setShowConfetti] = useState(false);
 
     useEffect(() => {
@@ -25,7 +26,7 @@ const App = () => {
 
         if (savedState && savedState.date === today) {
             setGuesses(savedState.guesses || []);
-            setRemainingGuesses(savedState.remainingGuesses ?? 5); // Use saved value or fallback to 5
+            setRemainingGuesses(savedState.remainingGuesses ?? 5);
         } else {
             setGuesses([]);
             setRemainingGuesses(5);
@@ -66,7 +67,7 @@ const App = () => {
             setShowConfetti(true);
             setTimeout(() => setShowConfetti(false), 3000);
             setGuesses([...guesses, { guess: numGuess, result: "correct" }]);
-            setRemainingGuesses(0); // Stop the game when the correct answer is guessed
+            setRemainingGuesses(0);
         } else {
             const updatedGuesses = [
                 ...guesses,
@@ -90,39 +91,52 @@ const App = () => {
     };
 
     return (
-        <div className="App">
-            {showConfetti && <Confetti />}
-            <header>
-                <h1 id="game-title" role="heading" aria-level="1">Piechartle</h1>
-                <div className="instructions">
-                    <h2>How to Play</h2>
-                    <p>
-                        Welcome to Piechartle! Your goal is to guess the percentage of the cyan area in the pie chart.
-                        You have 5 guesses to get it right. Enter a number between 0 and 100 and submit your guess.
-                        Good luck!
-                    </p>
-                </div>
-            </header>
+        <>
+            <Helmet>
+                <title>Piechartle - Guess the Cyan Pie Chart Percentage</title>
+                <meta name="description" content="Play Piechartle, a Wordle-inspired pie chart guessing game! Guess the cyan area's percentage and test your puzzle-solving skills." />
+                <meta property="og:title" content="Piechartle - Cyan Pie Chart Guessing Game" />
+                <meta property="og:description" content="A Wordle-inspired game where you guess the cyan pie chart percentage. Fun and challenging!" />
+                <meta property="og:image" content="https://www.piechartle.com/piechart.jpg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Piechartle - The Best Pie Chart Wordle Game" />
+                <meta name="twitter:description" content="Try Piechartle, the fun Wordle-inspired pie chart puzzle game! Guess the cyan area percentage today!" />
+            </Helmet>
 
-            <PieChart percentage={correctPercentage} />
-            <div className="game-area">
-                <p>Guesses Remaining: {remainingGuesses}</p>
-                <GuessInput onGuess={handleGuess} disabled={remainingGuesses === 0} />
-                <div role="alert" aria-live="assertive">
-                    {feedback && <Feedback message={feedback} />}
-                </div>
+            <div className="App">
+                {showConfetti && <Confetti />}
+                <header>
+                    <h1 id="game-title" role="heading" aria-level="1">Piechartle</h1>
+                    <div className="instructions">
+                        <h2>How to Play</h2>
+                        <p>
+                            Welcome to Piechartle! Your goal is to guess the percentage of the cyan area in the pie chart.
+                            You have 5 guesses to get it right. Enter a number between 0 and 100 and submit your guess.
+                            Good luck!
+                        </p>
+                    </div>
+                </header>
+
+                <PieChart percentage={correctPercentage} />
+                <main className="game-area">
+                    <p>Guesses Remaining: {remainingGuesses}</p>
+                    <GuessInput onGuess={handleGuess} disabled={remainingGuesses === 0} />
+                    <div role="alert" aria-live="assertive">
+                        {feedback && <Feedback message={feedback} />}
+                    </div>
+                </main>
+                <section className="guess-history">
+                    <h2>Previous Guesses</h2>
+                    <ul>
+                        {guesses.map((g, index) => (
+                            <li key={index}>
+                                {g.guess}% - {g.result === "correct" ? "🎉 Correct" : g.result}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
             </div>
-            <section className="guess-history">
-                <h2>Previous Guesses</h2>
-                <ul>
-                    {guesses.map((g, index) => (
-                        <li key={index}>
-                            {g.guess}% - {g.result === "correct" ? "🎉 Correct" : g.result}
-                        </li>
-                    ))}
-                </ul>
-            </section>
-        </div>
+        </>
     );
 };
 
