@@ -27,13 +27,30 @@ const getNextMidnightUTC = () => {
     );
 };
 
+const calculateTimeLeft = () => {
+    const now = new Date();
+    const timeUntilNext = getNextMidnightUTC() - now;
+
+    const hours = Math.floor((timeUntilNext / (1000 * 60 * 60)) % 24)
+        .toString()
+        .padStart(2, "0");
+    const minutes = Math.floor((timeUntilNext / (1000 * 60)) % 60)
+        .toString()
+        .padStart(2, "0");
+    const seconds = Math.floor((timeUntilNext / 1000) % 60)
+        .toString()
+        .padStart(2, "0");
+
+    return { hours, minutes, seconds };
+};
+
 const App = () => {
     const [correctPercentage, setCorrectPercentage] = useState(getDailyPercentage);
     const [guesses, setGuesses] = useState([]);
     const [feedback, setFeedback] = useState("");
     const [remainingGuesses, setRemainingGuesses] = useState(null);
     const [showConfetti, setShowConfetti] = useState(false);
-    const [timeLeft, setTimeLeft] = useState({ hours: "00", minutes: "00", seconds: "00" });
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
 
     useEffect(() => {
         const savedState = JSON.parse(localStorage.getItem("gameState"));
@@ -72,26 +89,7 @@ const App = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const now = new Date();
-            const timeUntilNext = getNextMidnightUTC() - now;
-
-            if (timeUntilNext <= 0) {
-                clearInterval(interval);
-                setCorrectPercentage(getDailyPercentage());
-                setGuesses([]);
-                setRemainingGuesses(5);
-            } else {
-                const hours = Math.floor((timeUntilNext / (1000 * 60 * 60)) % 24)
-                    .toString()
-                    .padStart(2, "0");
-                const minutes = Math.floor((timeUntilNext / (1000 * 60)) % 60)
-                    .toString()
-                    .padStart(2, "0");
-                const seconds = Math.floor((timeUntilNext / 1000) % 60)
-                    .toString()
-                    .padStart(2, "0");
-                setTimeLeft({ hours, minutes, seconds });
-            }
+            setTimeLeft(calculateTimeLeft());
         }, 1000);
 
         return () => clearInterval(interval);
@@ -136,19 +134,30 @@ const App = () => {
         <>
             <Helmet>
                 <title>Piechartle - Guess the Cyan Pie Chart Percentage</title>
-                <meta name="description" content="Play Piechartle, a Wordle-inspired pie chart guessing game! Guess the cyan area's percentage and test your puzzle-solving skills." />
+                <meta
+                    name="description"
+                    content="Play Piechartle, a Wordle-inspired pie chart guessing game! Guess the cyan area's percentage and test your puzzle-solving skills."
+                />
                 <meta property="og:title" content="Piechartle - Cyan Pie Chart Guessing Game" />
-                <meta property="og:description" content="A Wordle-inspired game where you guess the cyan pie chart percentage. Fun and challenging!" />
+                <meta
+                    property="og:description"
+                    content="A Wordle-inspired game where you guess the cyan pie chart percentage. Fun and challenging!"
+                />
                 <meta property="og:image" content="https://www.piechartle.com/piechart.jpg" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Piechartle - The Best Pie Chart Wordle Game" />
-                <meta name="twitter:description" content="Try Piechartle, the fun Wordle-inspired pie chart puzzle game! Guess the cyan area percentage today!" />
+                <meta
+                    name="twitter:description"
+                    content="Try Piechartle, the fun Wordle-inspired pie chart puzzle game! Guess the cyan area percentage today!"
+                />
             </Helmet>
 
             <div className="App">
                 {showConfetti && <Confetti />}
                 <header>
-                    <h1 id="game-title" role="heading" aria-level="1">Piechartle</h1>
+                    <h1 id="game-title" role="heading" aria-level="1">
+                        Piechartle
+                    </h1>
                     <div className="instructions">
                         <h2>How to Play</h2>
                         <p>
@@ -159,14 +168,14 @@ const App = () => {
                     </div>
                 </header>
                 {remainingGuesses === 0 && (
-                    <div className="timer">
+                    <div className="timer" role="timer" aria-live="polite">
                         <h2>Time Until Next Challenge</h2>
-                        <div className="timer-display">
-                            <span>{timeLeft.hours}</span>
-                            <span className="timer-separator">:</span>
-                            <span>{timeLeft.minutes}</span>
-                            <span className="timer-separator">:</span>
-                            <span>{timeLeft.seconds}</span>
+                        <div className="timer-display" aria-label={`Time remaining: ${timeLeft.hours} hours, ${timeLeft.minutes} minutes, ${timeLeft.seconds} seconds`}>
+                            <span aria-hidden="true">{timeLeft.hours}</span>
+                            <span className="timer-separator" aria-hidden="true">:</span>
+                            <span aria-hidden="true">{timeLeft.minutes}</span>
+                            <span className="timer-separator" aria-hidden="true">:</span>
+                            <span aria-hidden="true">{timeLeft.seconds}</span>
                         </div>
                     </div>
                 )}
