@@ -7,10 +7,24 @@ import { Helmet } from "react-helmet";
 import "./App.css";
 
 const getDailyPercentage = () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const seed = parseInt(today.replace(/-/g, ""), 10);
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    const seed = parseInt(todayUTC.replace(/-/g, ""), 10);
     const rng = Math.sin(seed) * 10000;
     return Math.abs(rng % 100).toFixed(0);
+};
+
+const getNextMidnightUTC = () => {
+    const now = new Date();
+    return new Date(
+        Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() + 1,
+            0,
+            0,
+            0
+        )
+    );
 };
 
 const App = () => {
@@ -19,12 +33,13 @@ const App = () => {
     const [feedback, setFeedback] = useState("");
     const [remainingGuesses, setRemainingGuesses] = useState(null);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [timeLeft, setTimeLeft] = useState({ hours: "00", minutes: "00", seconds: "00" });
 
     useEffect(() => {
         const savedState = JSON.parse(localStorage.getItem("gameState"));
-        const today = new Date().toISOString().slice(0, 10);
+        const todayUTC = new Date().toISOString().slice(0, 10);
 
-        if (savedState && savedState.date === today) {
+        if (savedState && savedState.date === todayUTC) {
             setGuesses(savedState.guesses || []);
             setRemainingGuesses(savedState.remainingGuesses ?? 5);
         } else {
@@ -33,7 +48,7 @@ const App = () => {
             localStorage.setItem(
                 "gameState",
                 JSON.stringify({
-                    date: today,
+                    date: todayUTC,
                     guesses: [],
                     remainingGuesses: 5,
                 })
@@ -43,17 +58,44 @@ const App = () => {
 
     useEffect(() => {
         if (remainingGuesses !== null) {
-            const today = new Date().toISOString().slice(0, 10);
+            const todayUTC = new Date().toISOString().slice(0, 10);
             localStorage.setItem(
                 "gameState",
                 JSON.stringify({
-                    date: today,
+                    date: todayUTC,
                     guesses,
                     remainingGuesses,
                 })
             );
         }
     }, [guesses, remainingGuesses]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeUntilNext = getNextMidnightUTC() - now;
+
+            if (timeUntilNext <= 0) {
+                clearInterval(interval);
+                setCorrectPercentage(getDailyPercentage());
+                setGuesses([]);
+                setRemainingGuesses(5);
+            } else {
+                const hours = Math.floor((timeUntilNext / (1000 * 60 * 60)) % 24)
+                    .toString()
+                    .padStart(2, "0");
+                const minutes = Math.floor((timeUntilNext / (1000 * 60)) % 60)
+                    .toString()
+                    .padStart(2, "0");
+                const seconds = Math.floor((timeUntilNext / 1000) % 60)
+                    .toString()
+                    .padStart(2, "0");
+                setTimeLeft({ hours, minutes, seconds });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     const handleGuess = (guess) => {
         const numGuess = parseInt(guess, 10);
@@ -116,7 +158,18 @@ const App = () => {
                         </p>
                     </div>
                 </header>
-
+                {remainingGuesses === 0 && (
+                    <div className="timer">
+                        <h2>Time Until Next Challenge</h2>
+                        <div className="timer-display">
+                            <span>{timeLeft.hours}</span>
+                            <span className="timer-separator">:</span>
+                            <span>{timeLeft.minutes}</span>
+                            <span className="timer-separator">:</span>
+                            <span>{timeLeft.seconds}</span>
+                        </div>
+                    </div>
+                )}
                 <PieChart percentage={correctPercentage} />
                 <main className="game-area">
                     <p>Guesses Remaining: {remainingGuesses}</p>

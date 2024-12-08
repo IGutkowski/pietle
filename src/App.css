@@ -202,3 +202,27 @@ svg {
     height: auto;
   }
 }
+
+.timer {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 1.2rem;
+  text-shadow: 0px 2px 4px rgba(0, 188, 212, 0.5);
+}
+
+.timer-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  gap: 5px;
+}
+
+.timer-separator {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
