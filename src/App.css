@@ -225,4 +225,23 @@ svg {
   font-size: 2rem;
   font-weight: bold;
 }
+.footer {
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: #a5a5a5;
+  background-color: transparent;
+}
+
+.footer p {
+  margin: 5px 0;
+  font-size: 0.6rem;
+}
+
+.footer a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+  color: #a5a5a5;
+}
+
+
 

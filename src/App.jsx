@@ -197,6 +197,10 @@ const App = () => {
                         ))}
                     </ul>
                 </section>
+                <footer className="footer">
+                    <p>&copy; {new Date().getFullYear()} Igor Gutkowski</p>
+                    <p>Contact: <a href="mailto:igor0gutkowski@gmail.com">igor0gutkowski@gmail.com</a></p>
+                </footer>
             </div>
         </>
     );
