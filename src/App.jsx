@@ -143,7 +143,7 @@ const App = () => {
                     property="og:description"
                     content="A Wordle-inspired game where you guess the cyan pie chart percentage. Fun and challenging!"
                 />
-                <meta property="og:image" content="https://www.piechartle.com/piechart.jpg" />
+                <meta property="og:image" content="https://www.piechartle.com/piechartle.png" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Piechartle - The Best Pie Chart Wordle Game" />
                 <meta
